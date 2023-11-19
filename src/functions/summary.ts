@@ -47,6 +47,7 @@ export const handler = async (
             .addSelect('SUM(scrutiny.nullVotes)::int', 'nullVotes')
             .addSelect('SUM(scrutiny.voters)::int', 'voters')
             .addSelect('SUM(scrutiny.voted)::int', 'voted')
+            .addSelect('COUNT(*)::int', 'scrutinies')
             .where('scrutiny.votesTotal > 0')
 
         if (establishmentId) {
