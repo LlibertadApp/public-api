@@ -48,6 +48,12 @@ export class Scrutiny {
     @Column({ nullable: false })
     public nullVotes: number
 
+    @Column({ nullable: false })
+    public voters: number
+
+    @Column({ nullable: false })
+    public voted: number
+
     // DATOS DE LA MESA
 
     // identificador_unico_mesa (GOB)
