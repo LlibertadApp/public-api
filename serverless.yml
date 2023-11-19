@@ -1,0 +1,77 @@
+service: public-api
+frameworkVersion: "3"
+
+useDotenv: true
+
+provider:
+  name: aws
+  deploymentMethod: direct
+  region: us-east-2
+  runtime: nodejs18.x
+  httpApi:
+    name: "Public API"
+    cors: true
+
+plugins:
+  - serverless-auto-swagger
+  - serverless-prune-plugin
+  - serverless-webpack
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+custom:
+  prune:
+    automatic: true
+    number: 3
+  webpack:
+    excludeRegex: \.ts|test|\.map
+    includeModules:
+      forceExclude:
+        - aws-sdk
+  autoswagger:
+    typefiles: ['./src/types/api-types.d.ts']
+    excludeStages: ['prd', 'uat']
+
+package:
+  excludeDevDependencies: true
+  exclude:
+    - ./**
+  include:
+    - ./src/**.ts
+
+functions:
+  summary:
+    description: "Summary"
+    handler: src/functions/summary.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /v1/summary
+          queryStringParameters:
+            districtId:
+              required: false
+              type: 'string'
+            sectionId:
+              required: false
+              type: 'string'
+            subsectionId:
+              required: false
+              type: 'string'
+            circuitId:
+              required: false
+              type: 'string'
+            establishmentId:
+              required: false
+              type: 'string'
+          responseData:
+            default: {}
+            200:
+              bodyType: 'SummaryResponse'
+
+    vpc:
+      securityGroupIds:
+        - ${env:SECURITY_GROUP_ID_1}
+      subnetIds:
+        - ${env:SUBNET_ID_1}
+        - ${env:SUBNET_ID_2}
+        - ${env:SUBNET_ID_3}
