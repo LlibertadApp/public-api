@@ -38,7 +38,8 @@ jobs:
           "DATABASE_LOGGING": "${{ vars.DATABASE_LOGGING }}",
           "DATABASE_SYNC": "${{ vars.DATABASE_SYNC }}",
           "DATABASE_TYPE": "${{ vars.DATABASE_TYPE }}",
-          "LBERTAPP_ENV": "${{ vars.LBERTAPP_ENV }}"
+          "LBERTAPP_ENV": "${{ vars.LBERTAPP_ENV }}",
+          "SQS_QUEUE_ARN": "${{ vars.SQS_QUEUE_ARN }}"
         }'
         python3 dotEnvGenerator.py "$VARIABLES_JSON"
         cat .env
