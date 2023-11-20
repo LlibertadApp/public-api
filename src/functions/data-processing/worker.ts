@@ -1,4 +1,4 @@
-import { SQSEvent } from 'aws-lambda';
+import { SQSEvent, Context, Callback } from 'aws-lambda';
 import { updateScrutinyFromBackend } from "@/helpers/daos/scrutinyDao";
 
 /**
@@ -19,15 +19,36 @@ import { updateScrutinyFromBackend } from "@/helpers/daos/scrutinyDao";
 }
 */
 
-export const handler = async (event: SQSEvent): Promise<void> => {
-	console.log('event', event);
+export const handler = async (
+  event: SQSEvent,
+  context: Context,
+  callback: Callback
+): Promise<any> => {
+
+  const response = {
+      statusCode: 200,
+      body: JSON.stringify({
+          message: 'SQS event processed.',
+          input: event,
+      }),
+  };
+
 	for (const record of event.Records) {
 		const data = JSON.parse(record.body)
 		try {
 			const scrutiny = await updateScrutinyFromBackend(data)
 			console.log('UPDATED', scrutiny)
 		} catch (err) {
-			console.error(err)
+			callback(null, {
+          statusCode: 200,
+          body: JSON.stringify({
+              message: 'SQS event processed with errors.',
+              input: event,
+              error: err,
+          }),
+      });
 		}
 	}
+
+  callback(null, response);
 };
